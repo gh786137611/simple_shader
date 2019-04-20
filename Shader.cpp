@@ -79,7 +79,7 @@ void Shader::get_active_attribs() {
     glGetProgramiv(m_Program, GL_ACTIVE_ATTRIBUTES, &num);
     for (int i=0; i<num; ++i) {
         glGetActiveAttrib(m_Program, i, 512, &length, &size, &type, name);
-        m_Attribs.push_back(new Attrib(i,
+        m_Attribs.push_back(new Attrib(glGetAttribLocation(m_Program, name),
                 Attrib::component_size(type),
                 Attrib::component_type(type), name));
     }
@@ -95,7 +95,7 @@ void Shader::get_active_uniforms() {
     int samplerNum = 0;
     for (int i= 0; i<num; ++i){
         glGetActiveUniform(m_Program, i, 512, &length, &size, &type, name);
-        Uniform *uniform = Uniform::create(type, i, name);
+        Uniform *uniform = Uniform::create(type, glGetUniformLocation(m_Program, name), name);
         if (is_sampler(type)) {
             uniform->m_Auxiliary = samplerNum;
             samplerNum++;
